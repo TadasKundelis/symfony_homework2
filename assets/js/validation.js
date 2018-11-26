@@ -1,21 +1,31 @@
 const axios = require('axios');
 
 let name = document.getElementById('name');
-let validationResult = document.getElementById('validation-result');
-const validateName = function () {
-    validationResult.innerText = '...';
-    axios.post(validationResult.dataset.path, {input: name.value})
+let team = document.getElementById('team');
+let nameValidationResult = document.getElementById('name-validation');
+let teamValidationResult = document.getElementById('team-validation');
+const validate = function (event) {
+    let inputField, result;
+    if (event.target.id === 'name') {
+      [inputField, result] = [name, nameValidationResult, ];
+    } else {
+      [inputField, result] = [team, teamValidationResult];
+    }
+    result.innerHTML = '...';
+    axios.post(result.dataset.path, {input: inputField.value})
         .then(function(response) {
             if (response.data.valid) {
-                validationResult.innerHTML = ":)";
+                result.innerHTML = ":)";
             } else {
-                validationResult.innerHTML = ":(";
+                result.innerHTML = ":(";
             }
         })
         .catch(function (error) {
-            validationResult.innerText = 'Error: ' + error;
+            result.innerText = 'Error: ' + error;
         });
 };
 
-name.onkeyup = validateName;
-name.onchange = validateName;
+[name, team].forEach(el => {
+    el.onkeyup = validate;
+    el.onchange = validate;
+})
